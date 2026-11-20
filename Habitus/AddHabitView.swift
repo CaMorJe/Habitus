@@ -9,8 +9,18 @@ import SwiftUI
 
 struct AddHabitView: View {
     var body: some View {
-        VStack {
+        NavigationStack {
             HabitHorizontalListView(HabitList: Habit.mockHabits)
+            Spacer()
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(role: .confirm) {
+                        
+                    } label: {
+                        Image(systemName: "plus.circle")
+                    }
+                }
+            }
         }
         .padding()
     }
@@ -20,17 +30,17 @@ struct AddHabitView: View {
 struct HabitHorizontalListView: View {
     public let HabitList: [Habit]
     var body: some View {
-        ScrollView(.horizontal) {
-            LazyHStack {
-                ForEach(HabitList) { habit in
-                    VStack {
-                        habitCardView(cardColor: habit.theme, cardName: habit.type.rawValue, cardIcon: habit.icon)
-                        
-                        Text(habit.type.rawValue)
-                            .font(.headline.bold())
+        Section("Choose the kind of habit you want to add") {
+            ScrollView(.horizontal) {
+                LazyHStack {
+                    ForEach(HabitList) { habit in
+                        VStack {
+                            habitCardView(cardColor: habit.color, cardName: habit.name , cardIcon: habit.icon)
+                        }
                     }
                 }
             }
+            .fixedSize(horizontal: false, vertical: true)
         }
     }
 }
@@ -39,16 +49,26 @@ struct HabitHorizontalListView: View {
 struct habitCardView: View {
     var cardColor: Color
     var cardName: String
-    var cardIcon: String
+    var cardIcon: Image
     
     var body: some View {
-        Image(systemName: cardIcon)
-            .resizable()
-            .scaledToFit()
-            .frame(width: 60, height: 60)
-            .foregroundStyle(.white)
-            .padding(25)
-            .background(cardColor, in: Circle())
+        Button {
+            
+        } label: {
+            VStack {
+                cardIcon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 50, height: 50)
+                    .foregroundStyle(.white)
+                    .padding(25)
+                    .background(cardColor, in: Circle())
+                
+                Text(cardName)
+                    .font(.headline.bold())
+                    .foregroundStyle(.primary)
+            }
+        }
     }
 }
 
