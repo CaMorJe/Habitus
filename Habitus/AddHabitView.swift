@@ -12,15 +12,6 @@ struct AddHabitView: View {
         NavigationStack {
             HabitHorizontalListView(HabitList: Habit.mockHabits)
             Spacer()
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(role: .confirm) {
-                        
-                    } label: {
-                        Image(systemName: "plus.circle")
-                    }
-                }
-            }
         }
         .padding()
     }
@@ -29,13 +20,31 @@ struct AddHabitView: View {
 
 struct HabitHorizontalListView: View {
     public let HabitList: [Habit]
+    @State private var selectedHabit: UUID? = nil
+    
     var body: some View {
         Section("Choose the kind of habit you want to add") {
             ScrollView(.horizontal) {
                 LazyHStack {
                     ForEach(HabitList) { habit in
                         VStack {
-                            habitCardView(cardColor: habit.color, cardName: habit.name , cardIcon: habit.icon)
+                            Button {
+                                handleCardTap(for: habit)
+                            } label: {
+                                VStack {
+                                    habit.icon
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 35, height: 35)
+                                        .foregroundStyle(.white)
+                                        .padding(25)
+                                        .background(cardBackgroundColor(for: habit), in: Circle())
+                                    
+                                    Text(habit.name)
+                                        .font(.headline.bold())
+                                        .foregroundStyle(.black)
+                                }
+                            }
                         }
                     }
                 }
@@ -43,32 +52,16 @@ struct HabitHorizontalListView: View {
             .fixedSize(horizontal: false, vertical: true)
         }
     }
-}
-
-
-struct habitCardView: View {
-    var cardColor: Color
-    var cardName: String
-    var cardIcon: Image
     
-    var body: some View {
-        Button {
-            
-        } label: {
-            VStack {
-                cardIcon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 50, height: 50)
-                    .foregroundStyle(.white)
-                    .padding(25)
-                    .background(cardColor, in: Circle())
-                
-                Text(cardName)
-                    .font(.headline.bold())
-                    .foregroundStyle(.primary)
-            }
+    func cardBackgroundColor(for habit: Habit) -> Color {
+        guard selectedHabit == habit.id else {
+            return .secondary
         }
+        return habit.color
+    }
+    
+    func handleCardTap(for habit: Habit) {
+        selectedHabit = habit.id
     }
 }
 
